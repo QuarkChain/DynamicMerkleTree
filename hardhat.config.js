@@ -41,4 +41,7 @@ module.exports = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  mocha: {
+    grep: process.env.MOCHA_GREP || "",
+  },
 };

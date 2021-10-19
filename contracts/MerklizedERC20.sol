@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/Context.sol";
 
 import "./DynamicMerkleTree.sol";
 
-contract ERC20 is Context, IERC20, IERC20Metadata {
+contract MerklizedERC20 is Context, IERC20, IERC20Metadata {
     mapping(address => uint256) private _balances;
 
     mapping(address => uint256) private _indices1;
@@ -102,7 +102,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         return false;
     }
 
-    function transfer(
+    function transferTo(
         address recipient,
         uint256 amount,
         bytes32[] memory proof0,
@@ -186,11 +186,11 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
                 balance: _balances[addr]
             });
 
-            _balances[addr] += newAmount;
+            _balances[addr] = newAmount;
 
             TreeNode memory newNode = TreeNode({
                 addr: addr,
-                balance: _balances[addr]
+                balance: newAmount
             });
 
             rootHash = DynamicMerkleTree.update(
