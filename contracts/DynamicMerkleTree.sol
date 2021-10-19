@@ -29,7 +29,9 @@ library DynamicMerkleTree {
             }
 
             bytes32 _parentHash = bytes32(0);
-            if (_peerIdx > _idx) {
+            if (_peerIdx >= _len && _idx >= _len) {
+                // pass, _parentHash = bytes32(0)
+            } else if (_peerIdx > _idx) {
                 _parentHash = keccak256(abi.encodePacked(_nodeHash, _peerHash));
             } else {
                 _parentHash = keccak256(abi.encodePacked(_peerHash, _nodeHash));
@@ -104,7 +106,7 @@ library DynamicMerkleTree {
                 require(_proof[0] == _oldRoot, "ERR_PROOF");
             } else {
                 require(
-                    verify(_len, _len + 1, _oldRoot, bytes32(0), _proof),
+                    verify(_len, _len, _oldRoot, bytes32(0), _proof),
                     "ERR_PROOF"
                 );
             }

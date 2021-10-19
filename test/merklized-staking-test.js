@@ -42,7 +42,7 @@ function get_update_proof(nodes, idx) {
   }
   let proof = [];
 
-  while (hl.length > 1) {
+  while (hl.length > 1 || idx != 0) {
     nidx = Math.floor(idx / 2) * 2;
     if (nidx == idx) {
       nidx += 1;
@@ -167,5 +167,42 @@ describe("MerklizedStaking", function () {
     ];
     expect(await staking.rootHash()).to.equal(calc_root_hash(nodes));
     expect(await token.balanceOf(acc0.address)).to.equal(500);
+  });
+
+  it("Stake 20", async function () {
+    const Tree = await ethers.getContractFactory("DynamicMerkleTree");
+    const tree = await Tree.deploy();
+    await tree.deployed();
+
+    const Token = await ethers.getContractFactory("TestERC20");
+    const token = await Token.deploy();
+    await token.deployed();
+
+    const Staking = await ethers.getContractFactory("MerklizedStaking", {
+      libraries: {
+        DynamicMerkleTree: tree.address,
+      },
+    });
+    const staking = await Staking.deploy(token.address);
+    await staking.deployed();
+
+    let nodes = [];
+    expect(await staking.rootHash()).to.equal(calc_root_hash(nodes));
+    for (let i = 0; i < 20; i++) {
+      let acc = await ethers.getSigner(i);
+      console.log(acc.address);
+      await token.mint(acc.address, i + 100);
+      await token.connect(acc).approve(staking.address, i + 100);
+      console.log(get_append_proof(nodes));
+      await staking.connect(acc).stake(i + 100, get_append_proof(nodes));
+
+      nodes.push([
+        { t: "uint256", v: acc.address },
+        { t: "uint256", v: i + 100 },
+      ]);
+      expect(await staking.rootHash()).to.equal(calc_root_hash(nodes));
+    }
+
+    expect(await staking.rootHash()).to.equal(calc_root_hash(nodes));
   });
 });
