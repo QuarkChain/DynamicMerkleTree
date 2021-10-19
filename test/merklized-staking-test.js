@@ -190,10 +190,8 @@ describe("MerklizedStaking", function () {
     expect(await staking.rootHash()).to.equal(calc_root_hash(nodes));
     for (let i = 0; i < 20; i++) {
       let acc = await ethers.getSigner(i);
-      console.log(acc.address);
       await token.mint(acc.address, i + 100);
       await token.connect(acc).approve(staking.address, i + 100);
-      console.log(get_append_proof(nodes));
       await staking.connect(acc).stake(i + 100, get_append_proof(nodes));
 
       nodes.push([
