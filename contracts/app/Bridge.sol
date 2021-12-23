@@ -44,7 +44,7 @@ contract BridgeSource {
 
         if (sourceTokenAddress == address(0)){
             require(msg.value >= amountPlusFee,"not enough msg.value");
-            payable(sourceTokenAddress).transfer(amountPlusFee);
+            payable(address(this)).transfer(amountPlusFee);
         }else{
             IERC20(sourceTokenAddress).safeTransferFrom(
                 msg.sender,
@@ -163,17 +163,27 @@ contract BridgeDestination {
 
         bytes32 key = keccak256(abi.encode(tkey));
         require(ownerMap[key] != address(2**160 - 1), "already withdrawn");
-        if (ownerMap[key] == address(0)) {
-            IERC20(tkey.transferData.tokenAddress).safeTransfer(
-                tkey.transferData.destination,
-                tkey.transferData.amount
-            );
-        } else {
-            IERC20(tkey.transferData.tokenAddress).safeTransfer(
-                ownerMap[key],
-                tkey.transferData.amount
-            );
+
+        if (tkey.transferData.tokenAddress != address(0)){
+            if (ownerMap[key] == address(0)) {
+                IERC20(tkey.transferData.tokenAddress).safeTransfer(
+                    tkey.transferData.destination,
+                    tkey.transferData.amount
+                );
+            } else {
+                IERC20(tkey.transferData.tokenAddress).safeTransfer(
+                    ownerMap[key],
+                    tkey.transferData.amount
+                );
+            }
+        }else{
+            if (ownerMap[key] == address(0)) {
+                payable(tkey.transferData.destination).transfer(tkey.transferData.amount);
+            }else{
+                payable(ownerMap[key]).transfer(tkey.transferData.amount);
+            }
         }
+        
 
         ownerMap[key] = address(2**160 - 1); // -1, not used any more
     }
