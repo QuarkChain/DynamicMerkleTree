@@ -33,17 +33,24 @@ contract BridgeSource {
     constructor() {}
 
     function withdraw(
+        address sourceTokenAddress,
         BridgeLib.TransferData memory transferData,
         bytes32[] memory proof
-    ) public {
+    ) public payable{
         // safemath not needed for solidity 8
         uint256 amountPlusFee = (transferData.amount *
             (10000 + CONTRACT_FEE_BASIS_POINTS)) / 10000;
-        IERC20(transferData.tokenAddress).safeTransferFrom(
-            msg.sender,
-            address(this),
-            amountPlusFee
-        );
+
+        if (sourceTokenAddress == address(0)){
+            require(msg.value >= amountPlusFee,"not enough msg.value");
+            payable(sourceTokenAddress).transfer(amountPlusFee);
+        }else{
+            IERC20(sourceTokenAddress).safeTransferFrom(
+                msg.sender,
+                address(this),
+                amountPlusFee
+            );
+        }
 
         BridgeLib.TransferInitiated memory transferInitiated = BridgeLib
             .TransferInitiated({data: transferData, self: address(this)});
@@ -103,14 +110,20 @@ contract BridgeDestination {
         return 0;
     }
 
-    function buy(TransferKey memory tkey) public {
+    function buy(TransferKey memory tkey) public payable{
         uint256 amount = tkey.transferData.amount - getLPFee(tkey.transferData);
-        // TODO: another token address on dest. chain?
-        IERC20(tkey.transferData.tokenAddress).safeTransferFrom(
-            msg.sender,
-            tkey.transferData.destination,
-            amount
-        );
+        
+        if(tkey.transferData.tokenAddress == address(0)){
+            require(msg.value >= amount,"not enough msg.value");
+            payable(tkey.transferData.destination).transfer(amount);
+        }else{
+            // TODO: another token address on dest. chain?
+            IERC20(tkey.transferData.tokenAddress).safeTransferFrom(
+                msg.sender,
+                tkey.transferData.destination,
+                amount
+            );
+        }
 
         bytes32 key = keccak256(abi.encode(tkey));
         require(ownerMap[key] == address(0), "already bought or withdrawn");
