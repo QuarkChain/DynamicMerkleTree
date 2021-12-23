@@ -73,7 +73,7 @@ contract BridgeDestination {
 
     mapping(bytes32 => bool) public validatedStateRoots;
 
-    mapping(uint256 => bool) doneTransfers;
+    mapping(bytes32 => mapping(uint256 => bool)) public doneTransfers;
 
     constructor() {}
 
@@ -130,7 +130,7 @@ contract BridgeDestination {
             // TODO: prove stateRoot is in stateRootProof
         }
 
-        require(!doneTransfers[tkey.transferId], "already transfered");
+        require(!doneTransfers[sourceContract][tkey.transferId], "already transfered");
 
         BridgeLib.TransferInitiated memory transferInitiated = BridgeLib
             .TransferInitiated({data: tkey.transferData, self: sourceContract});
@@ -149,6 +149,6 @@ contract BridgeDestination {
             tkey.transferData.amount
         );
         ownerMap[key] = address(2**160 - 1); // -1, not used any more
-        doneTransfers[tkey.transferId] = true;
+        doneTransfers[sourceContract][tkey.transferId] = true;
     }
 }
