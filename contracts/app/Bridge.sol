@@ -11,6 +11,7 @@ library BridgeLib {
         address tokenAddress;
         address destination;
         uint256 amount;
+        uint256 fee;
         uint256 startTime;
         uint256 feeRampup;
     }
@@ -106,8 +107,13 @@ contract BridgeDestination {
         view
         returns (uint256)
     {
-        // TODO:
-        return 0;
+        if (currentTime < startTime){
+            return 0;
+        }else if(currentTime >= transferData.startTime + transferData.feeRampup){
+            return transferData.fee;
+        }else{
+            return transferData.fee * (transferData.currentTime - transferData.startTime); 
+        }
     }
 
     function buy(TransferKey memory tkey) public payable{
