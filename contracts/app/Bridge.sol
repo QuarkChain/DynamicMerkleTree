@@ -117,6 +117,14 @@ contract BridgeDestination {
         ownerMap[key] = msg.sender;
     }
 
+    function verifyStateRoot(bytes32 stateRoot, bytes32[] memory stateRootProof)
+        internal
+        pure
+        virtual
+    {
+        assert(false);
+    }
+
     function withdraw(
         TransferKey memory tkey,
         bytes32[] memory stateRootProof,
@@ -126,6 +134,7 @@ contract BridgeDestination {
         bytes32[] memory recordProof
     ) public {
         if (!validatedStateRoots[stateRoot]) {
+            verifyStateRoot(stateRoot, stateRootProof);
             // TODO: prove stateRoot is in stateRootProof
             validatedStateRoots[stateRoot] = true;
         }
