@@ -106,7 +106,6 @@ contract BridgeDestination {
 
     function buy(TransferKey memory tkey) public {
         uint256 amount = tkey.transferData.amount - getLPFee(tkey.transferData);
-        // TODO: another token address on dest. chain?
         IERC20(tkey.transferData.tokenAddress).safeTransferFrom(
             msg.sender,
             tkey.transferData.destination,
