@@ -108,12 +108,12 @@ contract BridgeDestination {
         returns (uint256)
     {
         uint256 currentTime = block.timestamp;
-        if (currentTime < startTime){
+        if (currentTime < transferData.startTime){
             return 0;
         }else if(currentTime >= transferData.startTime + transferData.feeRampup){
             return transferData.fee;
         }else{
-            return transferData.fee * (transferData.currentTime - transferData.startTime); 
+            return transferData.fee * (currentTime - transferData.startTime); 
         }
     }
 
