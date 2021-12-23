@@ -143,7 +143,7 @@ contract BridgeDestination {
         );
 
         bytes32 key = keccak256(abi.encode(tkey));
-        require(ownerMap[key] != address(2**160 - 1), "already transfered");
+        require(ownerMap[key] != address(2**160 - 1), "already withdrawn");
         if (ownerMap[key] == address(0)) {
             IERC20(tkey.transferData.tokenAddress).safeTransfer(
                 tkey.transferData.destination,
