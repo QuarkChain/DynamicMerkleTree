@@ -113,6 +113,7 @@ contract BridgeDestination {
         );
 
         bytes32 key = keccak256(abi.encode(tkey));
+        require(ownerMap[key] == address(0), "already bought or withdrawn");
         ownerMap[key] = msg.sender;
     }
 
@@ -141,10 +142,19 @@ contract BridgeDestination {
         );
 
         bytes32 key = keccak256(abi.encode(tkey));
-        IERC20(tkey.transferData.tokenAddress).safeTransfer(
-            ownerMap[key],
-            tkey.transferData.amount
-        );
+        require(ownerMap[key] != address(2**160 - 1), "already withdrawn");
+        if (ownerMap[key] == address(0)) {
+            IERC20(tkey.transferData.tokenAddress).safeTransfer(
+                tkey.transferData.destination,
+                tkey.transferData.amount
+            );
+        } else {
+            IERC20(tkey.transferData.tokenAddress).safeTransfer(
+                ownerMap[key],
+                tkey.transferData.amount
+            );
+        }
+
         ownerMap[key] = address(2**160 - 1); // -1, not used any more
     }
 }
