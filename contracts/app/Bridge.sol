@@ -73,7 +73,6 @@ contract BridgeDestination {
 
     mapping(bytes32 => bool) public validatedStateRoots;
 
-
     constructor() {}
 
     function changeOwner(TransferKey memory tkey, address newOwner) public {
@@ -130,7 +129,6 @@ contract BridgeDestination {
             // TODO: prove stateRoot is in stateRootProof
         }
 
-
         BridgeLib.TransferInitiated memory transferInitiated = BridgeLib
             .TransferInitiated({data: tkey.transferData, self: sourceContract});
 
@@ -154,7 +152,6 @@ contract BridgeDestination {
                 ownerMap[key],
                 tkey.transferData.amount
             );
-
         }
 
         ownerMap[key] = address(2**160 - 1); // -1, not used any more
