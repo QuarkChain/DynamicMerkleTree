@@ -33,13 +33,14 @@ contract BridgeSource {
     constructor() {}
 
     function withdraw(
+        address sourceTokenAddress,
         BridgeLib.TransferData memory transferData,
         bytes32[] memory proof
     ) public {
         // safemath not needed for solidity 8
         uint256 amountPlusFee = (transferData.amount *
             (10000 + CONTRACT_FEE_BASIS_POINTS)) / 10000;
-        IERC20(transferData.tokenAddress).safeTransferFrom(
+        IERC20(sourceTokenAddress).safeTransferFrom(
             msg.sender,
             address(this),
             amountPlusFee
