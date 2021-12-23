@@ -126,6 +126,7 @@ contract BridgeDestination {
     ) public {
         if (!validatedStateRoots[stateRoot]) {
             // TODO: prove stateRoot is in stateRootProof
+            validatedStateRoots[stateRoot] = true;
         }
 
         BridgeLib.TransferInitiated memory transferInitiated = BridgeLib
