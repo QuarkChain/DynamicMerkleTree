@@ -37,15 +37,15 @@ contract BridgeSource {
         address sourceTokenAddress,
         BridgeLib.TransferData memory transferData,
         bytes32[] memory proof
-    ) public payable{
+    ) public payable {
         // safemath not needed for solidity 8
         uint256 amountPlusFee = (transferData.amount *
             (10000 + CONTRACT_FEE_BASIS_POINTS)) / 10000;
 
-        if (sourceTokenAddress == address(0)){
-            require(msg.value >= amountPlusFee,"not enough msg.value");
+        if (sourceTokenAddress == address(0)) {
+            require(msg.value >= amountPlusFee, "not enough msg.value");
             payable(address(this)).transfer(amountPlusFee);
-        }else{
+        } else {
             IERC20(sourceTokenAddress).safeTransferFrom(
                 msg.sender,
                 address(this),
@@ -108,22 +108,24 @@ contract BridgeDestination {
         returns (uint256)
     {
         uint256 currentTime = block.timestamp;
-        if (currentTime < transferData.startTime){
+        if (currentTime < transferData.startTime) {
             return 0;
-        }else if(currentTime >= transferData.startTime + transferData.feeRampup){
+        } else if (
+            currentTime >= transferData.startTime + transferData.feeRampup
+        ) {
             return transferData.fee;
-        }else{
-            return transferData.fee * (currentTime - transferData.startTime); 
+        } else {
+            return transferData.fee * (currentTime - transferData.startTime);
         }
     }
 
-    function buy(TransferKey memory tkey) public payable{
+    function buy(TransferKey memory tkey) public payable {
         uint256 amount = tkey.transferData.amount - getLPFee(tkey.transferData);
-        
-        if(tkey.transferData.tokenAddress == address(0)){
-            require(msg.value >= amount,"not enough msg.value");
+
+        if (tkey.transferData.tokenAddress == address(0)) {
+            require(msg.value >= amount, "not enough msg.value");
             payable(tkey.transferData.destination).transfer(amount);
-        }else{
+        } else {
             // TODO: another token address on dest. chain?
             IERC20(tkey.transferData.tokenAddress).safeTransferFrom(
                 msg.sender,
@@ -164,7 +166,7 @@ contract BridgeDestination {
         bytes32 key = keccak256(abi.encode(tkey));
         require(ownerMap[key] != address(2**160 - 1), "already withdrawn");
 
-        if (tkey.transferData.tokenAddress != address(0)){
+        if (tkey.transferData.tokenAddress != address(0)) {
             if (ownerMap[key] == address(0)) {
                 IERC20(tkey.transferData.tokenAddress).safeTransfer(
                     tkey.transferData.destination,
@@ -176,14 +178,15 @@ contract BridgeDestination {
                     tkey.transferData.amount
                 );
             }
-        }else{
+        } else {
             if (ownerMap[key] == address(0)) {
-                payable(tkey.transferData.destination).transfer(tkey.transferData.amount);
-            }else{
+                payable(tkey.transferData.destination).transfer(
+                    tkey.transferData.amount
+                );
+            } else {
                 payable(ownerMap[key]).transfer(tkey.transferData.amount);
             }
         }
-        
 
         ownerMap[key] = address(2**160 - 1); // -1, not used any more
     }
