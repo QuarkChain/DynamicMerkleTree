@@ -73,7 +73,6 @@ contract BridgeDestination {
 
     mapping(bytes32 => bool) public validatedStateRoots;
 
-    mapping(bytes32 => mapping(uint256 => bool)) public doneTransfers;
 
     constructor() {}
 
@@ -115,6 +114,7 @@ contract BridgeDestination {
         );
 
         bytes32 key = keccak256(abi.encode(tkey));
+        require(ownerMap[key] == address(0), "already bought or withdrawn");
         ownerMap[key] = msg.sender;
     }
 
@@ -130,7 +130,6 @@ contract BridgeDestination {
             // TODO: prove stateRoot is in stateRootProof
         }
 
-        require(!doneTransfers[sourceContract][tkey.transferId], "already transfered");
 
         BridgeLib.TransferInitiated memory transferInitiated = BridgeLib
             .TransferInitiated({data: tkey.transferData, self: sourceContract});
@@ -144,11 +143,20 @@ contract BridgeDestination {
         );
 
         bytes32 key = keccak256(abi.encode(tkey));
-        IERC20(tkey.transferData.tokenAddress).safeTransfer(
-            ownerMap[key],
-            tkey.transferData.amount
-        );
+        require(ownerMap[key] == address(2**160 - 1), "already transfered");
+        if (ownerMap[key] == address(0)) {
+            IERC20(tkey.transferData.tokenAddress).safeTransfer(
+                tkey.transferData.destination,
+                tkey.transferData.amount
+            );
+        } else {
+            IERC20(tkey.transferData.tokenAddress).safeTransfer(
+                ownerMap[key],
+                tkey.transferData.amount
+            );
+
+        }
+
         ownerMap[key] = address(2**160 - 1); // -1, not used any more
-        doneTransfers[sourceContract][tkey.transferId] = true;
     }
 }
