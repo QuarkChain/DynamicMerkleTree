@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import "../DynamicMerkleTree.sol";
 
@@ -69,7 +70,7 @@ contract BridgeSource {
     }
 }
 
-contract BridgeDestination {
+contract BridgeDestination is ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     struct TransferKey {
@@ -115,11 +116,11 @@ contract BridgeDestination {
         ) {
             return transferData.fee;
         } else {
-            return transferData.fee * (currentTime - transferData.startTime) / transferData.feeRampup;
+            return transferData.fee * (currentTime - transferData.startTime);
         }
     }
 
-    function buy(TransferKey memory tkey) public payable {
+    function buy(TransferKey memory tkey) public payable nonReentrant {
         uint256 amount = tkey.transferData.amount - getLPFee(tkey.transferData);
 
         if (tkey.transferData.tokenAddress == address(0)) {
@@ -146,7 +147,7 @@ contract BridgeDestination {
         address sourceContract,
         uint256 transferLen,
         bytes32[] memory recordProof
-    ) public {
+    ) public nonReentrant {
         if (!validatedStateRoots[stateRoot]) {
             // TODO: prove stateRoot is in stateRootProof
             validatedStateRoots[stateRoot] = true;
