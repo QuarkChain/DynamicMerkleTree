@@ -115,7 +115,7 @@ contract BridgeDestination {
         ) {
             return transferData.fee;
         } else {
-            return transferData.fee * (currentTime - transferData.startTime);
+            return transferData.fee * (currentTime - transferData.startTime) / transferData.feeRampup;
         }
     }
 
