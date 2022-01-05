@@ -11,3 +11,11 @@ contract TestERC20 is ERC20 {
         _mint(addr, amount);
     }
 }
+
+contract TestERC20WithName is ERC20 {
+    constructor(string memory name) ERC20(name, name) {}
+
+    function mint(address addr, uint256 amount) public {
+        _mint(addr, amount);
+    }
+}

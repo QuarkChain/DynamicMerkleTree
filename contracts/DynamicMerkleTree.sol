@@ -9,7 +9,7 @@ library DynamicMerkleTree {
         uint256 _len,
         bytes32 _leafHash,
         bytes32[] memory _proof
-    ) public pure returns (bytes32 _rootHash) {
+    ) internal pure returns (bytes32 _rootHash) {
         if (_len == 0) {
             return bytes32(0);
         }
@@ -49,7 +49,7 @@ library DynamicMerkleTree {
         uint256 _idx,
         bytes32 _leafHash,
         bytes32[] memory _proof
-    ) public pure returns (bytes32 _rootHash) {
+    ) internal pure returns (bytes32 _rootHash) {
         bytes32 _nodeHash = _leafHash;
 
         for (uint256 i = 0; i < _proof.length; i++) {
@@ -75,7 +75,7 @@ library DynamicMerkleTree {
         bytes32 _root,
         bytes32 _oldLeafHash,
         bytes32[] memory _proof
-    ) public pure returns (bool) {
+    ) internal pure returns (bool) {
         return calcRootHash(_idx, _len, _oldLeafHash, _proof) == _root;
     }
 
@@ -86,7 +86,7 @@ library DynamicMerkleTree {
         bytes32 _oldLeafHash,
         bytes32 _newLeafHash,
         bytes32[] memory _proof
-    ) public pure returns (bytes32 _newRoot) {
+    ) internal pure returns (bytes32 _newRoot) {
         require(
             verify(_idx, _len, _oldRoot, _oldLeafHash, _proof),
             "ERR_PROOF"
@@ -99,7 +99,7 @@ library DynamicMerkleTree {
         bytes32 _oldRoot,
         bytes32 _leafHash,
         bytes32[] memory _proof
-    ) public pure returns (bytes32 _newRoot) {
+    ) internal pure returns (bytes32 _newRoot) {
         if (_len > 0) {
             if ((_len & (_len - 1)) == 0) {
                 // 2^n, a new layer will be added.

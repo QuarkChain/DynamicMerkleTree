@@ -29,6 +29,28 @@ npx solhint 'contracts/**/*.sol'
 npx solhint 'contracts/**/*.sol' --fix
 ```
 
+# Arbitrum L2 Bridge Example
+
+This project implements an token transfer between two arbitrum instances using Dynamic Merkle Tree
+
+
+## To Play
+
+Try running some of the following tasks:
+
+```shell
+npm run arb_bridge_deploy
+```
+
+## Deploy Contracts on Testnet
+
+L1 Bridge: [0x972096D19c43aAdFaBA7C433bF33f34be568330F](https://rinkeby.etherscan.io/address/0x972096D19c43aAdFaBA7C433bF33f34be568330F#code)
+L2 Bridge Source: [0xc31dB9BC7d5bfD1e0aEBe936b20E025831bCb3Be](https://testnet.arbiscan.io/address/0xc31dB9BC7d5bfD1e0aEBe936b20E025831bCb3Be#code)
+L2 Bridge Destination: [0xa4f7e85327BE5648488844A85a00197af9ef136a](https://testnet.arbiscan.io/address/0xa4f7e85327BE5648488844A85a00197af9ef136a#code)
+L2 Token Source: [0x1158F18eFe4DAF4e71b31b077b340927A8A9f5Ef](https://testnet.arbiscan.io/address/0x1158F18eFe4DAF4e71b31b077b340927A8A9f5Ef#code)
+L2 Token Destination: [0x68e7155dF845635DF488fdED81BFC76C8210FBB2](https://testnet.arbiscan.io/address/0x68e7155dF845635DF488fdED81BFC76C8210FBB2#code)
+
+
 # Disclaimer
 The code is not audited.  USE AT YOUR OWN RISK.
 
