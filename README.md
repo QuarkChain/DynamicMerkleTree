@@ -29,7 +29,7 @@ npx solhint 'contracts/**/*.sol'
 npx solhint 'contracts/**/*.sol' --fix
 ```
 
-# Arbitrum L2 Bridge Example
+# Cross L2 Bridge Example
 
 This project implements an token transfer between two arbitrum instances using Dynamic Merkle Tree
 
