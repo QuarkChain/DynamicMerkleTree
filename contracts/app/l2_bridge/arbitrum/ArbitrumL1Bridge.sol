@@ -41,9 +41,11 @@ contract ArbitrumL1Bridge {
         uint256 maxGas,
         uint256 gasPriceBid
     ) public payable returns (uint256) {
-        bytes memory data =
-            abi.encodeWithSelector(L2BridgeSource.updateReceiptRoot.selector, newReceiptRoot);
-        
+        bytes memory data = abi.encodeWithSelector(
+            L2BridgeSource.updateReceiptRoot.selector,
+            newReceiptRoot
+        );
+
         uint256 ticketID = inbox.createRetryableTicket{value: msg.value}(
             l2Target,
             0,
@@ -64,9 +66,11 @@ contract ArbitrumL1Bridge {
         uint256 maxGas,
         uint256 gasPriceBid
     ) public payable returns (uint256) {
-        bytes memory data =
-            abi.encodeWithSelector(L2BridgeSource.updateReceiptRoot.selector, receiptRoot);
-        
+        bytes memory data = abi.encodeWithSelector(
+            L2BridgeSource.updateReceiptRoot.selector,
+            receiptRoot
+        );
+
         uint256 ticketID = inbox.createRetryableTicket{value: msg.value}(
             l2Target,
             0,
@@ -86,7 +90,10 @@ contract ArbitrumL1Bridge {
     function updateReceiptRoot(bytes32 newRoot) public {
         IOutbox outbox = IOutbox(inbox.bridge().activeOutbox());
         address l2Sender = outbox.l2ToL1Sender();
-        require(l2Sender == l2Source, "receipt root only updateable by source L2");
+        require(
+            l2Sender == l2Source,
+            "receipt root only updateable by source L2"
+        );
 
         receiptRoot = newRoot;
     }

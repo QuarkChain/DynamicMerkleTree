@@ -13,9 +13,7 @@ contract ArbitrumBridgeDestination is L2BridgeDestination {
 
     event L2ToL1TxCreated(uint256 indexed withdrawalId);
 
-    constructor(
-        address _l1Target
-    ) {
+    constructor(address _l1Target) {
         l1Target = _l1Target;
     }
 
@@ -25,8 +23,10 @@ contract ArbitrumBridgeDestination is L2BridgeDestination {
     }
 
     function updateReceiptRootToL1() public returns (uint256) {
-        bytes memory data =
-            abi.encodeWithSelector(L2BridgeSource.updateReceiptRoot.selector, receiptRoot);
+        bytes memory data = abi.encodeWithSelector(
+            L2BridgeSource.updateReceiptRoot.selector,
+            receiptRoot
+        );
 
         uint256 withdrawalId = arbsys.sendTxToL1(l1Target, data);
 

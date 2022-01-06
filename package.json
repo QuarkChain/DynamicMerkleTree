@@ -29,6 +29,7 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "arb_bridge_deploy": "hardhat run scripts/arb_bridge_deploy.js",
+    "opt_bridge_deploy": "hardhat run scripts/opt_bridge_deploy.js",
     "arb_bridge_exec": "hardhat run scripts/arb_bridge_exec.js",
     "prettier:check": "prettier-check contracts/**/*.sol",
     "prettier:fix": "prettier --write contracts/**/*.sol test/**/*.js scripts/**/*.js"
